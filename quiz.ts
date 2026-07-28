@@ -9,7 +9,7 @@ export interface Question {
   hint?: string;
 }
 
-export type DipState = 'idle' | 'dipping' | 'revealing-correct' | 'revealing-incorrect';
+export type DipState = 'idle' | 'dipping in' | 'revealing-correct' | 'revealing-incorrect';
 
 export interface UserAnswer {
   questionId: number;
