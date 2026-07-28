@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Cozy Cafe Quiz - Interactive English Dunk & Learn</title>
+    <meta name="description" content="A gamified English learning experience styled like a cozy cafe. Dip biscuits in warm tea to test your vocabulary, grammar, and listening skills!" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- React 18 & Babel Standalone CDNs -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Canvas Confetti & Lucide Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      /* ==========================================================
+         COZY CAFE QUIZ - DESIGN SYSTEM & ANIMATIONS
+         ========================================================== */
+      :root {
+        --bg-wood-dark: #3D2314;
+        --bg-wood-medium: #54331B;
+        --bg-table-warm: #EFE0C9;
+        --bg-table-light: #F8EFE3;
+        --cafe-cream: #FFFDF9;
+        --cafe-paper: #F5E6D3;
+        
+        --tea-amber-dark: #6E260E;
+        --tea-amber-main: #B85B14;
+        --tea-amber-light: #D97724;
+        --tea-amber-glow: #F3A051;
+        
+        --biscuit-crust: #8B5A2B;
+        --biscuit-golden: #D29B56;
+        --biscuit-light: #E6B97E;
+        --biscuit-highlight: #F5D3A6;
+        --biscuit-shadow: #A66D38;
+        
+        --accent-correct: #2E7D32;
+        --accent-correct-light: #E8F5E9;
+        --accent-incorrect: #C62828;
+        --accent-incorrect-light: #FFEBEE;
+        
+        --text-dark: #2C1810;
+        --text-muted: #6B4E3D;
+
+        --shadow-cozy: 0 10px 30px rgba(44, 24, 16, 0.15);
+        --shadow-deep: 0 18px 45px rgba(44, 24, 16, 0.28);
+        --shadow-biscuit: 0 6px 16px rgba(61, 35, 20, 0.2);
+
+        --font-serif: 'Playfair Display', Georgia, serif;
+        --font-sans: 'Quicksand', 'Fredoka', sans-serif;
+        --font-rounded: 'Fredoka', 'Quicksand', sans-serif;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        font-family: var(--font-sans);
+        background-color: var(--bg-table-warm);
+        color: var(--text-dark);
+        min-height: 100vh;
+        overflow-x: hidden;
+        background-image: 
+          radial-gradient(circle at 10% 20%, rgba(139, 94, 60, 0.05) 0%, transparent 20%),
+          radial-gradient(circle at 90% 80%, rgba(184, 91, 20, 0.05) 0%, transparent 20%),
+          repeating-linear-gradient(45deg, rgba(111, 78, 55, 0.02) 0px, rgba(111, 78, 55, 0.02) 2px, transparent 2px, transparent 8px);
+      }
+
+      .app-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 1.5rem 2rem 1.5rem;
+      }
+
+      .quiz-stage {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1.8rem;
+        align-items: center;
+        margin-top: 1rem;
+      }
+
+      /* HEADER */
+      .header-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.2rem 1.8rem;
+        margin-top: 1rem;
+        background: var(--cafe-cream);
+        border-radius: 24px;
+        box-shadow: var(--shadow-cozy);
+        border: 2px solid rgba(139, 90, 43, 0.12);
+      }
+
+      .brand-section { display: flex; align-items: center; gap: 0.8rem; }
+      .brand-icon {
+        width: 44px; height: 44px;
+        background: linear-gradient(135deg, var(--tea-amber-main), var(--tea-amber-dark));
+        border-radius: 14px;
+        display: flex; align-items: center; justify-content: center;
+        color: white; font-size: 1.4rem;
+        box-shadow: 0 4px 10px rgba(184, 91, 20, 0.3);
+      }
+
+      .brand-title {
+        font-family: var(--font-serif);
+        font-size: 1.6rem; font-weight: 700; color: var(--text-dark);
+        line-height: 1.1;
+      }
+      .brand-subtitle { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+
+      .header-controls { display: flex; align-items: center; gap: 0.75rem; }
+      .btn-icon {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        padding: 0.6rem 1rem;
+        background: var(--cafe-paper);
+        border: 1.5px solid rgba(139, 90, 43, 0.2);
+        border-radius: 12px;
+        color: var(--text-dark);
+        font-family: var(--font-sans); font-size: 0.9rem; font-weight: 600;
+        cursor: pointer; transition: all 0.2s ease;
+      }
+      .btn-icon:hover {
+        background: #EAD3B9; transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(111, 78, 55, 0.12);
+      }
+
+      /* PROGRESS BAR */
+      .progress-container {
+        width: 100%; max-width: 800px;
+        background: var(--cafe-cream);
+        padding: 1rem 1.5rem;
+        border-radius: 20px;
+        box-shadow: var(--shadow-cozy);
+        border: 1.5px solid rgba(139, 90, 43, 0.1);
+        display: flex; flex-direction: column; gap: 0.6rem;
+      }
+      .progress-header { display: flex; justify-content: space-between; align-items: center; }
+      .category-badge {
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        padding: 0.35rem 0.8rem;
+        background: rgba(184, 91, 20, 0.1); color: var(--tea-amber-main);
+        border-radius: 20px; font-weight: 700; font-size: 0.85rem;
+        text-transform: uppercase; letter-spacing: 0.5px;
+      }
+      .progress-stats { font-weight: 700; color: var(--text-muted); font-size: 0.95rem; }
+      .progress-track {
+        height: 12px; background: var(--cafe-paper);
+        border-radius: 8px; overflow: hidden; position: relative;
+      }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--tea-amber-light), var(--tea-amber-main));
+        border-radius: 8px; transition: width 0.4s ease;
+      }
+      .teacup-steps { display: flex; justify-content: space-between; margin-top: 0.2rem; }
+      .teacup-step {
+        display: flex; align-items: center; justify-content: center;
+        width: 28px; height: 28px; border-radius: 50%;
+        background: var(--cafe-paper); color: #B09B8B;
+        transition: all 0.3s ease; font-size: 0.8rem;
+        border: 1px solid rgba(139, 90, 43, 0.15);
+      }
+      .teacup-step.active {
+        background: var(--tea-amber-main); color: white;
+        transform: scale(1.2); box-shadow: 0 4px 10px rgba(184, 91, 20, 0.3);
+      }
+      .teacup-step.completed { background: var(--accent-correct); color: white; }
+
+      /* TEACUP QUESTION */
+      .teacup-container {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        position: relative; width: 100%; max-width: 650px; margin: 0.5rem 0;
+      }
+      .steam-wrapper { display: flex; gap: 16px; margin-bottom: -15px; z-index: 2; pointer-events: none; }
+      .steam-particle {
+        width: 12px; height: 40px;
+        background: linear-gradient(to top, rgba(255,255,255,0.7), transparent);
+        border-radius: 10px; filter: blur(4px);
+        animation: steamRise 3s infinite ease-out;
+      }
+      .steam-particle:nth-child(2) { animation-delay: 0.8s; height: 50px; }
+      .steam-particle:nth-child(3) { animation-delay: 1.6s; }
+
+      @keyframes steamRise {
+        0% { opacity: 0; transform: translateY(10px) scaleX(0.8); }
+        40% { opacity: 0.75; }
+        100% { opacity: 0; transform: translateY(-45px) scaleX(1.8) rotate(10deg); }
+      }
+
+      .saucer {
+        width: 90%; max-width: 580px; height: 38px;
+        background: linear-gradient(180deg, #FFFFFF 0%, #E8DFD5 100%);
+        border-radius: 50%; box-shadow: 0 16px 30px rgba(61, 35, 20, 0.25);
+        border: 3px solid #E0D3C5; position: absolute; bottom: 5px; z-index: 1;
+      }
+      .teacup-body {
+        position: relative; z-index: 2; width: 100%; max-width: 520px;
+        background: linear-gradient(135deg, #FFFDF9 0%, #F5EAE0 60%, #EAD5C3 100%);
+        border-radius: 20px 20px 100px 100px;
+        border: 5px solid #F0E2D4;
+        box-shadow: inset 0 -15px 30px rgba(111, 78, 55, 0.1), 0 12px 25px rgba(61, 35, 20, 0.18);
+        padding: 1.4rem 2rem 2rem 2rem;
+        display: flex; flex-direction: column; align-items: center; text-align: center;
+      }
+      .teacup-handle {
+        position: absolute; right: -55px; top: 40px;
+        width: 65px; height: 100px;
+        border: 12px solid #F5EAE0; border-left: none;
+        border-radius: 0 45px 45px 0; z-index: 1;
+        box-shadow: 6px 4px 15px rgba(61, 35, 20, 0.15);
+      }
+      .tea-liquid-surface {
+        width: 100%; height: 50px;
+        background: radial-gradient(ellipse at center, var(--tea-amber-light) 0%, var(--tea-amber-main) 70%, var(--tea-amber-dark) 100%);
+        border-radius: 50%; border: 4px solid #E6D2C1;
+        box-shadow: inset 0 3px 8px rgba(0,0,0,0.3);
+        position: relative; overflow: hidden;
+        display: flex; align-items: center; justify-content: center;
+        margin-bottom: 1rem;
+      }
+      .tea-ripple {
+        position: absolute; width: 20px; height: 20px;
+        border: 2px solid rgba(255, 245, 230, 0.8); border-radius: 50%;
+        animation: teaRipple 1.2s infinite ease-out; pointer-events: none;
+      }
+      @keyframes teaRipple {
+        0% { width: 20px; height: 10px; opacity: 0.9; }
+        100% { width: 240px; height: 45px; opacity: 0; }
+      }
+
+      .question-badge {
+        font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 1px; color: var(--tea-amber-dark);
+        background: rgba(184, 91, 20, 0.12); padding: 0.3rem 0.8rem;
+        border-radius: 12px; margin-bottom: 0.5rem;
+      }
+      .question-text {
+        font-family: var(--font-serif); font-size: 1.45rem; font-weight: 700;
+        color: var(--text-dark); line-height: 1.35; margin-bottom: 0.4rem;
+      }
+      .question-hint { font-size: 0.88rem; color: var(--text-muted); font-style: italic; }
+
+      /* BISCUITS GRID */
+      .biscuits-grid {
+        display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem;
+        width: 100%; max-width: 800px;
+      }
+      @media (max-width: 640px) { .biscuits-grid { grid-template-columns: 1fr; } }
+
+      .biscuit-wrapper { perspective: 1000px; position: relative; }
+      .biscuit-button {
+        width: 100%; min-height: 85px;
+        background: linear-gradient(145deg, var(--biscuit-highlight) 0%, var(--biscuit-golden) 60%, var(--biscuit-crust) 100%);
+        border: 3px solid #B57F44; border-radius: 18px;
+        padding: 1rem 1.2rem;
+        display: flex; align-items: center; justify-content: space-between; gap: 0.8rem;
+        cursor: pointer; position: relative;
+        box-shadow: var(--shadow-biscuit);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+        user-select: none; overflow: hidden;
+      }
+      .biscuit-button::before {
+        content: ''; position: absolute; inset: 5px;
+        border: 2px dashed rgba(139, 90, 43, 0.4); border-radius: 12px; pointer-events: none;
+      }
+      .biscuit-dots {
+        position: absolute; inset: 0;
+        background-image: radial-gradient(rgba(100, 60, 25, 0.35) 1.5px, transparent 1.5px);
+        background-size: 14px 14px; opacity: 0.45; pointer-events: none;
+      }
+      .biscuit-button:hover:not(:disabled) {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 12px 24px rgba(61, 35, 20, 0.25); border-color: #8C5523;
+      }
+      .biscuit-button:disabled { cursor: not-allowed; }
+      .biscuit-label {
+        display: flex; align-items: center; justify-content: center;
+        width: 32px; height: 32px; border-radius: 50%;
+        background: rgba(255, 255, 255, 0.6); color: var(--bg-wood-dark);
+        font-family: var(--font-rounded); font-weight: 700; font-size: 1.1rem;
+        flex-shrink: 0; border: 1px solid rgba(139, 90, 43, 0.3);
+      }
+      .biscuit-text {
+        font-family: var(--font-sans); font-size: 1.05rem; font-weight: 700;
+        color: var(--text-dark); flex: 1; text-align: left; line-height: 1.3; z-index: 2;
+      }
+
+      /* 3-Second Dipping Animation */
+      .biscuit-button.state-dipping {
+        animation: biscuitDunk 3s ease-in-out forwards;
+        z-index: 50; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      }
+      @keyframes biscuitDunk {
+        0% { transform: translateY(0) scale(1); }
+        20% { transform: translateY(-70px) scale(1.08) rotate(-3deg); }
+        40% { transform: translateY(-140px) scale(0.95) rotate(2deg); }
+        50% { transform: translateY(-135px) scale(0.9) rotate(0deg); filter: brightness(0.85) sepia(0.3); }
+        65% { transform: translateY(-140px) scale(0.92) rotate(-1deg); }
+        80% { transform: translateY(-110px) scale(1.02); }
+        100% { transform: translateY(0) scale(1); }
+      }
+
+      /* Intact & Crumble states */
+      .biscuit-button.state-revealing-correct {
+        background: linear-gradient(145deg, #E8F5E9 0%, #A5D6A7 50%, #4CAF50 100%);
+        border-color: var(--accent-correct);
+        box-shadow: 0 0 25px rgba(76, 175, 80, 0.6);
+      }
+      .intact-shine {
+        position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+        background: linear-gradient(45deg, transparent 0%, rgba(255, 255, 255, 0.7) 50%, transparent 100%);
+        animation: shineSweep 1.2s ease-out; pointer-events: none;
+      }
+      @keyframes shineSweep {
+        0% { transform: translate(-100%, -100%) rotate(45deg); }
+        100% { transform: translate(100%, 100%) rotate(45deg); }
+      }
+
+      .biscuit-wrapper.state-revealing-incorrect .biscuit-button {
+        background: linear-gradient(145deg, #FFCDD2 0%, #EF9A9A 50%, #E57373 100%);
+        border-color: var(--accent-incorrect);
+      }
+      .crumb-particle {
+        position: absolute; width: 8px; height: 8px;
+        background: var(--biscuit-shadow); border-radius: 2px;
+        pointer-events: none; animation: fallCrumb 1.2s ease-out forwards;
+      }
+      @keyframes fallCrumb {
+        0% { opacity: 1; transform: translate(0, 0) scale(1); }
+        100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.3) rotate(360deg); }
+      }
+
+      /* FEEDBACK BANNER */
+      .feedback-banner {
+        width: 100%; max-width: 800px; padding: 1.2rem 1.8rem;
+        border-radius: 20px; display: flex; align-items: center; justify-content: space-between; gap: 1.2rem;
+        box-shadow: var(--shadow-deep); animation: slideUp 0.35s ease-out;
+      }
+      @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+      .feedback-banner.correct { background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); border: 2px solid var(--accent-correct); color: #1B5E20; }
+      .feedback-banner.incorrect { background: linear-gradient(135deg, #FFEBEE 0%, #FFCDD2 100%); border: 2px solid var(--accent-incorrect); color: #B71C1C; }
+
+      .btn-next {
+        padding: 0.8rem 1.6rem; background: var(--text-dark); color: white;
+        border: none; border-radius: 14px; font-family: var(--font-rounded);
+        font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease;
+        white-space: nowrap; box-shadow: 0 4px 12px rgba(44, 24, 16, 0.25);
+      }
+      .btn-next:hover { background: var(--tea-amber-main); transform: translateY(-2px); }
+
+      /* RESULTS SUMMARY */
+      .results-container {
+        width: 100%; max-width: 800px; background: var(--cafe-cream);
+        border-radius: 28px; padding: 2.5rem 2rem; box-shadow: var(--shadow-deep);
+        border: 3px solid rgba(139, 90, 43, 0.15); display: flex; flex-direction: column; align-items: center; text-align: center;
+        margin-top: 1rem; animation: fadeIn 0.4s ease-out;
+      }
+      @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+      .results-badge-icon {
+        width: 90px; height: 90px;
+        background: linear-gradient(135deg, var(--tea-amber-light), var(--tea-amber-dark));
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        color: white; font-size: 2.8rem; margin-bottom: 1.2rem;
+        box-shadow: 0 10px 25px rgba(184, 91, 20, 0.4);
+      }
+      .results-title { font-family: var(--font-serif); font-size: 2.2rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.4rem; }
+      .results-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.8rem; }
+
+      .score-card {
+        display: flex; gap: 2.5rem; background: var(--cafe-paper);
+        padding: 1.5rem 2.5rem; border-radius: 20px; margin-bottom: 2rem;
+        border: 1.5px solid rgba(139, 90, 43, 0.15);
+      }
+      .stat-value { font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; color: var(--tea-amber-main); }
+      .stat-label { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+
+      .review-list { width: 100%; text-align: left; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+      .review-item { padding: 1rem 1.2rem; border-radius: 16px; background: white; border: 1px solid rgba(139, 90, 43, 0.12); display: flex; gap: 1rem; }
+      .review-q-text { font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
+      .review-exp { font-size: 0.88rem; color: var(--text-muted); }
+
+      .btn-primary {
+        padding: 0.9rem 2rem; background: linear-gradient(135deg, var(--tea-amber-main), var(--tea-amber-dark));
+        color: white; border: none; border-radius: 16px; font-family: var(--font-rounded);
+        font-weight: 700; font-size: 1.05rem; cursor: pointer; transition: all 0.2s ease;
+        box-shadow: 0 6px 18px rgba(184, 91, 20, 0.3); display: inline-flex; align-items: center; gap: 0.6rem;
+      }
+      .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(184, 91, 20, 0.45); }
+
+      /* MODAL */
+      .modal-overlay {
+        position: fixed; inset: 0; background: rgba(44, 24, 16, 0.6); backdrop-filter: blur(4px);
+        z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+      }
+      .modal-content {
+        background: var(--cafe-cream); border-radius: 24px; width: 100%; max-width: 680px;
+        display: flex; flex-direction: column; box-shadow: var(--shadow-deep);
+        border: 3px solid rgba(139, 90, 43, 0.15); overflow: hidden;
+      }
+      .modal-header { padding: 1.2rem 1.5rem; background: var(--cafe-paper); display: flex; justify-content: space-between; align-items: center; }
+      .modal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+      .json-textarea { width: 100%; height: 260px; font-family: monospace; font-size: 0.9rem; padding: 1rem; border-radius: 12px; border: 1.5px solid rgba(139, 90, 43, 0.25); }
+      .modal-footer { padding: 1rem 1.5rem; background: var(--cafe-paper); display: flex; justify-content: flex-end; gap: 0.8rem; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect, useRef } = React;
+
+      // Sample Questions
+      const DEFAULT_QUESTIONS = [
+        {
+          id: 1,
+          category: "Vocabulary",
+          level: "Intermediate",
+          question: "What is the synonym of 'cozy'?",
+          options: ["Snug & Comfortable", "Chilly & Bleak", "Vast & Empty", "Noisy & Frantic"],
+          correctAnswer: 0,
+          explanation: "'Cozy' means giving a feeling of comfort, warmth, and relaxation, just like a warm cafe!",
+          hint: "Think about how you feel curled up with a warm cup of tea."
+        },
+        {
+          id: 2,
+          category: "Grammar",
+          level: "Beginner",
+          question: "Which sentence uses the correct past tense form?",
+          options: [
+            "She drinked her Earl Grey tea slowly.",
+            "She drank her Earl Grey tea slowly.",
+            "She drunk her Earl Grey tea slowly.",
+            "She has drank her Earl Grey tea slowly."
+          ],
+          correctAnswer: 1,
+          explanation: "'Drank' is the simple past tense of the irregular verb 'drink'.",
+          hint: "The verb 'drink' follows the pattern drink -> drank -> drunk."
+        },
+        {
+          id: 3,
+          category: "Idioms",
+          level: "Intermediate",
+          question: "What does the phrase 'not my cup of tea' mean?",
+          options: [
+            "I forgot to order tea.",
+            "Something is not to my liking or interest.",
+            "This cup belongs to someone else.",
+            "The tea is too hot to drink."
+          ],
+          correctAnswer: 1,
+          explanation: "'Not my cup of tea' is a friendly idiom used when something isn't your preference.",
+          hint: "It's a polite way to say you don't particularly enjoy an activity."
+        },
+        {
+          id: 4,
+          category: "Phrasal Verbs",
+          level: "Advanced",
+          question: "Complete the phrase: 'Please _____ the tea into the cups carefully.'",
+          options: ["pour out", "dip in", "soak up", "spill over"],
+          correctAnswer: 0,
+          explanation: "'Pour out' refers to serving liquid out of a vessel into cups.",
+          hint: "Think of transferring liquid from a teapot."
+        },
+        {
+          id: 5,
+          category: "Vocabulary",
+          level: "Intermediate",
+          question: "Choose the word that best completes: 'The aroma of fresh pastry was _____.'",
+          options: ["Irresistible", "Repulsive", "Monotonous", "Indifferent"],
+          correctAnswer: 0,
+          explanation: "'Irresistible' means too attractive and tempting to resist!",
+          hint: "When bakery smells are so good you can't help but walk inside."
+        },
+        {
+          id: 6,
+          category: "Grammar",
+          level: "Advanced",
+          question: "Choose the correct modal verb: 'If you had arrived earlier, you _____ enjoyed fresh scones.'",
+          options: ["would have", "will have", "would be", "can have"],
+          correctAnswer: 0,
+          explanation: "Third conditional structures use 'If + past perfect..., would have + past participle'.",
+          hint: "Hypothetical past result of a past condition."
+        }
+      ];
+
+      // Web Audio Synthesizer
+      class SoundFx {
+        constructor() {
+          this.ctx = null;
+          this.isMuted = false;
+        }
+        init() {
+          if (!this.ctx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            this.ctx = new AudioCtx();
+          }
+          if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+        }
+        setMuted(m) { this.isMuted = m; }
+        playClick() {
+          if (this.isMuted) return;
+          this.init();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(120, this.ctx.currentTime + 0.05);
+          gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
+          osc.connect(gain); gain.connect(this.ctx.destination);
+          osc.start(); osc.stop(this.ctx.currentTime + 0.05);
+        }
+        playDip() {
+          if (this.isMuted) return;
+          this.init();
+          if (!this.ctx) return;
+          const t = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(350, t);
+          osc.frequency.exponentialRampToValueAtTime(180, t + 0.25);
+          gain.gain.setValueAtTime(0.2, t);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
+          osc.connect(gain); gain.connect(this.ctx.destination);
+          osc.start(t); osc.stop(t + 0.25);
+        }
+        playBubbling() {
+          if (this.isMuted) return;
+          this.init();
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime;
+          for (let i = 0; i < 3; i++) {
+            const bTime = now + (i * 0.2);
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(400 + Math.random() * 200, bTime);
+            osc.frequency.exponentialRampToValueAtTime(600 + Math.random() * 100, bTime + 0.06);
+            gain.gain.setValueAtTime(0.05, bTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, bTime + 0.06);
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            osc.start(bTime); osc.stop(bTime + 0.06);
+          }
+        }
+        playSuccess() {
+          if (this.isMuted) return;
+          this.init();
+          if (!this.ctx) return;
+          const t = this.ctx.currentTime;
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+            const noteTime = t + idx * 0.08;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, noteTime);
+            gain.gain.setValueAtTime(0.18, noteTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.35);
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            osc.start(noteTime); osc.stop(noteTime + 0.35);
+          });
+        }
+        playCrumble() {
+          if (this.isMuted) return;
+          this.init();
+          if (!this.ctx) return;
+          const t = this.ctx.currentTime;
+          const duration = 0.35;
+          const bufferSize = this.ctx.sampleRate * duration;
+          const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1);
+          const noise = this.ctx.createBufferSource();
+          noise.buffer = buffer;
+          const filter = this.ctx.createBiquadFilter();
+          filter.type = 'lowpass';
+          filter.frequency.setValueAtTime(1000, t);
+          filter.frequency.linearRampToValueAtTime(300, t + duration);
+          const gain = this.ctx.createGain();
+          gain.gain.setValueAtTime(0.25, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+          noise.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
+          noise.start(t); noise.stop(t + duration);
+        }
+      }
+      const sound = new SoundFx();
+
+      // Main App Component
+      function App() {
+        const [questions, setQuestions] = useState(DEFAULT_QUESTIONS);
+        const [currentIndex, setCurrentIndex] = useState(0);
+        const [userAnswers, setUserAnswers] = useState([]);
+        const [activeDippingIndex, setActiveDippingIndex] = useState(null);
+        const [selectedAnswer, setSelectedAnswer] = useState(null);
+        const [isQuizCompleted, setIsQuizCompleted] = useState(false);
+        const [isMuted, setIsMuted] = useState(false);
+        const [isEditorOpen, setIsEditorOpen] = useState(false);
+        const [jsonText, setJsonText] = useState(JSON.stringify(DEFAULT_QUESTIONS, null, 2));
+
+        const currentQ = questions[currentIndex];
+
+        const handleOptionClick = (idx, isCorrect) => {
+          if (selectedAnswer !== null || activeDippingIndex !== null) return;
+
+          setActiveDippingIndex(idx);
+          sound.playDip();
+
+          const timer = setInterval(() => sound.playBubbling(), 900);
+
+          setTimeout(() => {
+            clearInterval(timer);
+            setActiveDippingIndex(null);
+            setSelectedAnswer({ index: idx, isCorrect });
+
+            if (isCorrect) sound.playSuccess();
+            else sound.playCrumble();
+
+            setUserAnswers((prev) => [
+              ...prev,
+              { questionId: currentQ.id, selectedIndex: idx, correctIndex: currentQ.correctAnswer, isCorrect }
+            ]);
+          }, 3000);
+        };
+
+        const handleNext = () => {
+          setSelectedAnswer(null);
+          if (currentIndex + 1 < questions.length) {
+            setCurrentIndex((prev) => prev + 1);
+          } else {
+            setIsQuizCompleted(true);
+          }
+        };
+
+        const handleRestart = () => {
+          setCurrentIndex(0);
+          setUserAnswers([]);
+          setSelectedAnswer(null);
+          setActiveDippingIndex(null);
+          setIsQuizCompleted(false);
+        };
+
+        const handleSaveJSON = () => {
+          try {
+            const parsed = JSON.parse(jsonText);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setQuestions(parsed);
+              setIsEditorOpen(false);
+              handleRestart();
+            }
+          } catch(e) { alert("Invalid JSON format!"); }
+        };
+
+        return (
+          <div className="app-container">
+            {/* Header */}
+            <header className="header-bar">
+              <div className="brand-section">
+                <div className="brand-icon">☕</div>
+                <div>
+                  <h1 className="brand-title">Cafe Quiz</h1>
+                  <p className="brand-subtitle">English Dunk & Learn</p>
+                </div>
+              </div>
+              <div className="header-controls">
+                <button className="btn-icon" onClick={() => { sound.playClick(); sound.setMuted(!isMuted); setIsMuted(!isMuted); }}>
+                  <span>{isMuted ? '🔇 Muted' : '🔊 Sound On'}</span>
+                </button>
+                <button className="btn-icon" onClick={() => { sound.playClick(); setIsEditorOpen(true); }}>
+                  <span>📝 JSON Editor</span>
+                </button>
+                <button className="btn-icon" onClick={() => { sound.playClick(); handleRestart(); }}>
+                  <span>🔄 Reset</span>
+                </button>
+              </div>
+            </header>
+
+            {!isQuizCompleted ? (
+              <main className="quiz-stage">
+                {/* Progress Bar */}
+                <div className="progress-container">
+                  <div className="progress-header">
+                    <div className="category-badge">🏷️ {currentQ.category} • {currentQ.level}</div>
+                    <div className="progress-stats">Question {currentIndex + 1} of {questions.length}</div>
+                  </div>
+                  <div className="progress-track">
+                    <div className="progress-fill" style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }} />
+                  </div>
+                  <div className="teacup-steps">
+                    {questions.map((_, i) => (
+                      <div key={i} className={`teacup-step ${i === currentIndex ? 'active' : i < currentIndex ? 'completed' : ''}`}>
+                        ☕
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Teacup Question Display */}
+                <div className="teacup-container">
+                  <div className="steam-wrapper">
+                    <div className="steam-particle" />
+                    <div className="steam-particle" />
+                    <div className="steam-particle" />
+                  </div>
+                  <div className="teacup-body">
+                    <div className="teacup-handle" />
+                    <div className="tea-liquid-surface">
+                      {activeDippingIndex !== null && <div className="tea-ripple" />}
+                    </div>
+                    <div className="question-badge">English Dunk Challenge</div>
+                    <h2 className="question-text">{currentQ.question}</h2>
+                    {currentQ.hint && <p className="question-hint">💡 Hint: {currentQ.hint}</p>}
+                  </div>
+                  <div className="saucer" />
+                </div>
+
+                {/* 4 Biscuit Options */}
+                <div className="biscuits-grid">
+                  {currentQ.options.map((opt, i) => {
+                    const isCorrect = i === currentQ.correctAnswer;
+                    const isDipping = activeDippingIndex === i;
+                    const isRevealed = selectedAnswer !== null;
+
+                    let stateClass = 'idle';
+                    if (isDipping) stateClass = 'dipping';
+                    else if (isRevealed && isCorrect) stateClass = 'revealing-correct';
+                    else if (isRevealed && selectedAnswer.index === i && !isCorrect) stateClass = 'revealing-incorrect';
+
+                    return (
+                      <div key={i} className={`biscuit-wrapper state-${stateClass}`}>
+                        <button
+                          className={`biscuit-button state-${stateClass}`}
+                          onClick={() => handleOptionClick(i, isCorrect)}
+                          disabled={isRevealed || activeDippingIndex !== null}
+                        >
+                          <div className="biscuit-dots" />
+                          <div className="biscuit-label">{['A','B','C','D'][i]}</div>
+                          <span className="biscuit-text">{opt}</span>
+                          {stateClass === 'revealing-correct' && <div className="intact-shine" />}
+                        </button>
+                        {stateClass === 'revealing-incorrect' && Array.from({length: 10}).map((_, c) => (
+                          <div key={c} className="crumb-particle" style={{
+                            '--dx': `${(Math.random() - 0.5) * 140}px`,
+                            '--dy': `${40 + Math.random() * 60}px`,
+                            left: `${20 + Math.random() * 60}%`, top: '40%'
+                          }} />
+                        ))}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Feedback Banner */}
+                {selectedAnswer !== null && (
+                  <div className={`feedback-banner ${selectedAnswer.isCorrect ? 'correct' : 'incorrect'}`}>
+                    <div>
+                      <h3>{selectedAnswer.isCorrect ? '✨ Mmm! Perfect Dunk!' : '💥 Oops! It crumbled!'}</h3>
+                      <p>{currentQ.explanation}</p>
+                    </div>
+                    <button className="btn-next" onClick={() => { sound.playClick(); handleNext(); }}>
+                      {currentIndex + 1 === questions.length ? 'See Final Score ➔' : 'Next Question ➔'}
+                    </button>
+                  </div>
+                )}
+              </main>
+            ) : (
+              /* Results Summary */
+              <div className="results-container">
+                <div className="results-badge-icon">🏆</div>
+                <h2 className="results-title">
+                  {Math.round((userAnswers.filter(a => a.isCorrect).length / questions.length) * 100) >= 80 ? 'Master Barista 🏆' : 'Cafe Apprentice 🥐'}
+                </h2>
+                <p className="results-subtitle">Great job practicing your English skills with warm tea and biscuits!</p>
+                <div className="score-card">
+                  <div>
+                    <div className="stat-value">{userAnswers.filter(a => a.isCorrect).length}/{questions.length}</div>
+                    <div className="stat-label">Score</div>
+                  </div>
+                  <div>
+                    <div className="stat-value">{Math.round((userAnswers.filter(a => a.isCorrect).length / questions.length) * 100)}%</div>
+                    <div className="stat-label">Accuracy</div>
+                  </div>
+                </div>
+
+                <div className="review-list">
+                  <h3>Quiz Review</h3>
+                  {questions.map((q, idx) => {
+                    const ans = userAnswers.find(a => a.questionId === q.id);
+                    return (
+                      <div key={q.id} className="review-item">
+                        <span style={{ fontSize: '1.2rem' }}>{ans?.isCorrect ? '✅' : '❌'}</span>
+                        <div>
+                          <p className="review-q-text">{idx + 1}. {q.question}</p>
+                          <p className="review-exp"><strong>Answer:</strong> {q.options[q.correctAnswer]} — {q.explanation}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <button className="btn-primary" onClick={() => { sound.playClick(); handleRestart(); }}>🔄 Play Again</button>
+                  <button className="btn-icon" onClick={() => { sound.playClick(); setIsEditorOpen(true); }}>📝 Custom Questions</button>
+                </div>
+              </div>
+            )}
+
+            {/* Custom JSON Editor Modal */}
+            {isEditorOpen && (
+              <div className="modal-overlay" onClick={() => setIsEditorOpen(false)}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                  <div className="modal-header">
+                    <h3>Custom Question JSON Editor</h3>
+                    <button className="btn-icon" onClick={() => setIsEditorOpen(false)}>✕</button>
+                  </div>
+                  <div className="modal-body">
+                    <p>Paste custom question JSON below:</p>
+                    <textarea className="json-textarea" value={jsonText} onChange={(e) => setJsonText(e.target.value)} />
+                  </div>
+                  <div className="modal-footer">
+                    <button className="btn-primary" onClick={handleSaveJSON}>Apply Custom Questions</button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+  </body>
+</html>
