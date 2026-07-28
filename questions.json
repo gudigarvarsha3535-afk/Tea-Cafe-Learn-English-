@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "category": "Vocabulary",
+    "level": "Intermediate",
+    "question": "What is the synonym of 'cozy'?",
+    "options": ["Snug & Comfortable", "Chilly & Bleak", "Vast & Empty", "Noisy & Frantic"],
+    "correctAnswer": 0,
+    "explanation": "'Cozy' means giving a feeling of comfort, warmth, and relaxation, just like a warm cafe!",
+    "hint": "Think about how you feel curled up with a warm cup of tea."
+  },
+  {
+    "id": 2,
+    "category": "Grammar",
+    "level": "Beginner",
+    "question": "Which sentence uses the correct past tense form?",
+    "options": [
+      "She drinked her Earl Grey tea slowly.",
+      "She drank her Earl Grey tea slowly.",
+      "She drunk her Earl Grey tea slowly.",
+      "She has drank her Earl Grey tea slowly."
+    ],
+    "correctAnswer": 1,
+    "explanation": "'Drank' is the simple past tense of the irregular verb 'drink'. ('Drunk' is the past participle).",
+    "hint": "The verb 'drink' follows the pattern drink -> drank -> drunk."
+  },
+  {
+    "id": 3,
+    "category": "Idioms",
+    "level": "Intermediate",
+    "question": "What does the phrase 'not my cup of tea' mean?",
+    "options": [
+      "I forgot to order tea.",
+      "Something is not to my liking or interest.",
+      "This cup belongs to someone else.",
+      "The tea is too hot to drink."
+    ],
+    "correctAnswer": 1,
+    "explanation": "'Not my cup of tea' is a friendly idiom used when something isn't your preference or style.",
+    "hint": "It's a polite way to say you don't particularly enjoy an activity or thing."
+  },
+  {
+    "id": 4,
+    "category": "Phrasal Verbs",
+    "level": "Advanced",
+    "question": "Complete the phrase: 'Please _____ the tea into the cups carefully.'",
+    "options": ["pour out", "dip in", "soak up", "spill over"],
+    "correctAnswer": 0,
+    "explanation": "'Pour out' (or simply 'pour') refers to serving liquid out of a vessel into cups.",
+    "hint": "Think of transferring liquid from a teapot."
+  },
+  {
+    "id": 5,
+    "category": "Vocabulary",
+    "level": "Intermediate",
+    "question": "Choose the word that best completes: 'The aroma of fresh pastry was _____.'",
+    "options": ["Irresistible", "Repulsive", "Monotonous", "Indifferent"],
+    "correctAnswer": 0,
+    "explanation": "'Irresistible' means too attractive and tempting to resist!",
+    "hint": "When bakery smells are so good you can't help but walk inside."
+  },
+  {
+    "id": 6,
+    "category": "Grammar",
+    "level": "Advanced",
+    "question": "Choose the correct modal verb: 'If you had arrived earlier, you _____ enjoyed fresh scones.'",
+    "options": ["would have", "will have", "would be", "can have"],
+    "correctAnswer": 0,
+    "explanation": "Third conditional structures use 'If + past perfect..., would have + past participle'.",
+    "hint": "Expressing an unfulfilled past condition and its hypothetical past result."
+  }
+]
