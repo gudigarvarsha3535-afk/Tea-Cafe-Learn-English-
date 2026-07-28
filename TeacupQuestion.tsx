@@ -18,9 +18,7 @@ export const TeacupQuestion: React.FC<TeacupQuestionProps> = ({ question, isDipp
       </div>
 
       {/* Main Ceramic Teacup Body */}
-      <div className="teacup-body">
-        {/* Handle */}
-        <div className="teacup-handle" />
+      <div className="teacup-glassbody">
 
         {/* Liquid Surface */}
         <div className="tea-liquid-surface">
@@ -35,17 +33,7 @@ export const TeacupQuestion: React.FC<TeacupQuestionProps> = ({ question, isDipp
 
         <h2 className="question-text">{question.question}</h2>
 
-        {question.hint && (
-          <div className="question-hint-text">
-            <HelpCircle size={14} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'middle' }} />
-            Hint: {question.hint}
-          </div>
         )}
-      </div>
-
-      {/* Saucer Base Plate */}
-      <div className="saucer">
-        <div className="saucer-inner" />
       </div>
     </div>
   );
