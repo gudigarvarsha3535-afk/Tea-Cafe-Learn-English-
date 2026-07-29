@@ -16,37 +16,22 @@ export const FeedbackBanner: React.FC<FeedbackBannerProps> = ({
   isLastQuestion,
   onNext,
 }) => {
-  const correctCopyOptions = [
-    "Mmm! Perfect dunk!",
-    "Yum! That biscuit emerged intact!",
-    "Spot on! Freshly baked perfection!",
-    "Deliciously correct!",
-  ];
-
-  const incorrectCopyOptions = [
-    "Oops! It crumbled into the tea!",
-    "Oh no! The biscuit dissolved!",
-    "A bit too soggy! That was incorrect.",
-    "Crumbled into pieces!",
-  ];
-
-  const headline = isCorrect
-    ? correctCopyOptions[Math.floor(Math.random() * correctCopyOptions.length)]
-    : incorrectCopyOptions[Math.floor(Math.random() * incorrectCopyOptions.length)];
-
   return (
     <div className={`feedback-banner ${isCorrect ? 'correct' : 'incorrect'}`}>
       <div className="feedback-content">
         <div className="feedback-icon">
-          {isCorrect ? <CheckCircle2 size={24} /> : <XCircle size={24} />}
+          {isCorrect ? <CheckCircle2 size={26} /> : <XCircle size={26} />}
         </div>
         <div>
-          <h4 className="feedback-title">{headline}</h4>
+          <h4 className="feedback-title">
+            {isCorrect ? 'Correct! Great job! 🎉' : 'Not quite! Try again.'}
+          </h4>
           <p className="feedback-text">
             {!isCorrect && (
-              <strong>
-                Correct Answer: {question.options[question.correctAnswer]} —{' '}
-              </strong>
+              <span className="correct-answer-highlight">
+                <strong>Correct Answer:</strong> {question.options[question.correctAnswer]}
+                <br />
+              </span>
             )}
             {question.explanation}
           </p>
