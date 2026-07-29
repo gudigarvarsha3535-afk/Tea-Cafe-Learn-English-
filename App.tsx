@@ -16,7 +16,7 @@ export const App: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
 
-  // Interaction Lock and Selected Answer state
+  // State Machine variables
   const [activeDippingIndex, setActiveDippingIndex] = useState<number | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<{ index: number; isCorrect: boolean } | null>(null);
   const [isQuizCompleted, setIsQuizCompleted] = useState<boolean>(false);
@@ -102,6 +102,7 @@ export const App: React.FC = () => {
           <div className="biscuits-grid">
             {currentQuestion.options.map((optionText, idx) => {
               const isCorrectOption = idx === currentQuestion.correctAnswer;
+              const isSelected = selectedAnswer?.index === idx || activeDippingIndex === idx;
 
               return (
                 <BiscuitOption
@@ -110,6 +111,7 @@ export const App: React.FC = () => {
                   optionText={optionText}
                   isCorrect={isCorrectOption}
                   disabled={selectedAnswer !== null}
+                  isSelected={isSelected}
                   activeDippingIndex={activeDippingIndex}
                   onOptionSelected={(selIdx, correct) => {
                     setActiveDippingIndex(selIdx);
